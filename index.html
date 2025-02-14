@@ -65,7 +65,7 @@
   <div class="section" id="realEstate1">
     <h2>Real Estate 1 IRR Calculator</h2>
     <p>
-      <label for="re1Year">Year of Purchase (>=1964):</label>
+      <label for="re1Year">Year of Purchase:</label>
       <input type="number" id="re1Year" placeholder="e.g., 2000" />
     </p>
     <p>
@@ -82,7 +82,7 @@
   <div class="section" id="realEstate2">
     <h2>Real Estate 2 IRR Calculator</h2>
     <p>
-      <label for="re2Year">Year of Purchase (>=1964):</label>
+      <label for="re2Year">Year of Purchase:</label>
       <input type="number" id="re2Year" placeholder="e.g., 2000" />
     </p>
     <p>
@@ -99,7 +99,7 @@
   <div class="section" id="realEstate3">
     <h2>Real Estate 3 IRR Calculator</h2>
     <p>
-      <label for="re3Year">Year of Purchase (>=1964):</label>
+      <label for="re3Year">Year of Purchase:</label>
       <input type="number" id="re3Year" placeholder="e.g., 2000" />
     </p>
     <p>
@@ -154,6 +154,7 @@
     }
 
     // Function to calculate and get Real Estate IRR result as a string
+    // Using formula: IRR = (Current Value / Invested)^(1 / years) - 1
     function getRealEstateIRRResult(sectionId) {
       const yearInput = document.getElementById(sectionId + 'Year').value;
       const investedInput = document.getElementById(sectionId + 'Invested').value;
@@ -163,8 +164,8 @@
       const invested = parseFloat(investedInput);
       const currentValue = parseFloat(currentInput);
 
-      if (!year || year < 1964) {
-        return sectionId.toUpperCase() + ": Please enter a valid year (>=1964).";
+      if (!year) {
+        return "Please enter a valid year for " + sectionId.toUpperCase() + ".";
       }
       if (!invested || invested <= 0) {
         return sectionId.toUpperCase() + ": Please enter a valid invested amount.";
@@ -185,10 +186,20 @@
 
       // Calculate annualized IRR
       const irr = Math.pow(currentValue / invested, 1 / diffYears) - 1;
-      return sectionId.toUpperCase() + " IRR for year " + year + " is: " + (irr * 100).toFixed(2) + "%";
+
+      // Customize the output string for each Real Estate section
+      if (sectionId === "re1") {
+        return "Real estate 1 IRR for the year " + year + " is: " + (irr * 100).toFixed(2) + "%";
+      } else if (sectionId === "re2") {
+        return "Real estate 2 IRR for the year " + year + " is: " + (irr * 100).toFixed(2) + "%";
+      } else if (sectionId === "re3") {
+        return "Real estate 3 IRR for the year " + year + " is: " + (irr * 100).toFixed(2) + "%";
+      } else {
+        return sectionId.toUpperCase() + " IRR for year " + year + " is: " + (irr * 100).toFixed(2) + "%";
+      }
     }
 
-    // Combined function to calculate all results and display in the same output container
+    // Combined function to calculate all results and display in the output container
     function calculateAll() {
       const goldResult = getGoldIRRResult();
       const re1Result = getRealEstateIRRResult('re1');
