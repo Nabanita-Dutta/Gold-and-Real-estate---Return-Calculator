@@ -25,30 +25,45 @@
       border-radius: 8px;
     }
     h1, h2 { margin-top: 0; }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
     input, button { margin: 5px; padding: 5px; }
     label { display: inline-block; width: 180px; text-align: right; margin-right: 10px; }
+    .calculate-button {
+      font-size: 1.2em;
+      padding: 10px 20px;
+      margin-top: 20px;
+    }
+    #allResults {
+      margin-top: 30px;
+      padding: 20px;
+      border: 2px solid #444;
+      border-radius: 8px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #f9f9f9;
+    }
   </style>
 </head>
 <body>
-  <!-- Logo: Ensure the image is in the assets folder -->
+  <!-- Logo: Ensure the image is in the assets folder at /assets/logo.png -->
   <img src="assets/logo.png" alt="Anand Rathi Logo" class="logo">
 
+  <h1>XIRR Calculator for Gold & Real Estate</h1>
+
   <!-- Gold IRR Calculator -->
-  <h1>Gold IRR Calculator</h1>
   <div class="section" id="goldCalculator">
+    <h2>Gold IRR Calculator</h2>
     <p>
       <label for="goldYear">Year of Purchase (>=1964):</label>
       <input type="number" id="goldYear" placeholder="e.g., 1980" />
     </p>
-    <p>
-      <button onclick="calculateGoldIRR()">Calculate Gold IRR</button>
-    </p>
-    <p id="goldResult"></p>
   </div>
 
   <!-- Real Estate 1 IRR Calculator -->
-  <h1>Real Estate 1 IRR Calculator</h1>
   <div class="section" id="realEstate1">
+    <h2>Real Estate 1 IRR Calculator</h2>
     <p>
       <label for="re1Year">Year of Purchase (>=1964):</label>
       <input type="number" id="re1Year" placeholder="e.g., 2000" />
@@ -61,15 +76,11 @@
       <label for="re1Current">Current Value:</label>
       <input type="number" id="re1Current" placeholder="e.g., 1500000" />
     </p>
-    <p>
-      <button onclick="calculateRealEstateIRR('re1')">Calculate Real Estate 1 IRR</button>
-    </p>
-    <p id="re1Result"></p>
   </div>
 
   <!-- Real Estate 2 IRR Calculator -->
-  <h1>Real Estate 2 IRR Calculator</h1>
   <div class="section" id="realEstate2">
+    <h2>Real Estate 2 IRR Calculator</h2>
     <p>
       <label for="re2Year">Year of Purchase (>=1964):</label>
       <input type="number" id="re2Year" placeholder="e.g., 2000" />
@@ -82,15 +93,11 @@
       <label for="re2Current">Current Value:</label>
       <input type="number" id="re2Current" placeholder="e.g., 1500000" />
     </p>
-    <p>
-      <button onclick="calculateRealEstateIRR('re2')">Calculate Real Estate 2 IRR</button>
-    </p>
-    <p id="re2Result"></p>
   </div>
 
   <!-- Real Estate 3 IRR Calculator -->
-  <h1>Real Estate 3 IRR Calculator</h1>
   <div class="section" id="realEstate3">
+    <h2>Real Estate 3 IRR Calculator</h2>
     <p>
       <label for="re3Year">Year of Purchase (>=1964):</label>
       <input type="number" id="re3Year" placeholder="e.g., 2000" />
@@ -103,10 +110,15 @@
       <label for="re3Current">Current Value:</label>
       <input type="number" id="re3Current" placeholder="e.g., 1500000" />
     </p>
-    <p>
-      <button onclick="calculateRealEstateIRR('re3')">Calculate Real Estate 3 IRR</button>
-    </p>
-    <p id="re3Result"></p>
+  </div>
+
+  <!-- Single Calculate Button for All Sections -->
+  <button class="calculate-button" onclick="calculateAll()">Calculate All</button>
+
+  <!-- Consolidated Output Container -->
+  <div id="allResults">
+    <h2>Results</h2>
+    <div id="resultsContent"></div>
   </div>
 
   <script>
@@ -127,48 +139,38 @@
       2024: 10.22
     };
 
-    // Gold calculator function
-    function calculateGoldIRR() {
+    // Function to get Gold IRR result as a string
+    function getGoldIRRResult() {
       const yearInput = document.getElementById('goldYear').value;
       const year = parseInt(yearInput, 10);
-      const resultElement = document.getElementById('goldResult');
 
       if (!year || year < 1964) {
-        resultElement.innerText = "Please enter a valid year (>=1964).";
-        return;
+        return "Gold: Please enter a valid year (>=1964).";
       }
-
       if (goldIRRData[year] === undefined) {
-        resultElement.innerText = "Data for this year is not available.";
-        return;
+        return "Gold: Data for year " + year + " is not available.";
       }
-
-      resultElement.innerText = "Gold IRR (till Jan 25) for year " + year + " is: " + goldIRRData[year] + "%";
+      return "Gold IRR (till Jan 25) for year " + year + " is: " + goldIRRData[year] + "%";
     }
 
-    // Function to calculate annualized IRR for Real Estate
-    // Using formula: IRR = (Current Value / Invested)^(1 / years) - 1
-    function calculateRealEstateIRR(sectionId) {
+    // Function to calculate and get Real Estate IRR result as a string
+    function getRealEstateIRRResult(sectionId) {
       const yearInput = document.getElementById(sectionId + 'Year').value;
       const investedInput = document.getElementById(sectionId + 'Invested').value;
       const currentInput = document.getElementById(sectionId + 'Current').value;
-      const resultElement = document.getElementById(sectionId + 'Result');
 
       const year = parseInt(yearInput, 10);
       const invested = parseFloat(investedInput);
       const currentValue = parseFloat(currentInput);
 
       if (!year || year < 1964) {
-        resultElement.innerText = "Please enter a valid year (>=1964).";
-        return;
+        return sectionId.toUpperCase() + ": Please enter a valid year (>=1964).";
       }
       if (!invested || invested <= 0) {
-        resultElement.innerText = "Please enter a valid invested amount.";
-        return;
+        return sectionId.toUpperCase() + ": Please enter a valid invested amount.";
       }
       if (!currentValue || currentValue <= 0) {
-        resultElement.innerText = "Please enter a valid current value.";
-        return;
+        return sectionId.toUpperCase() + ": Please enter a valid current value.";
       }
 
       // Use the first day of the purchase year for calculation (YYYY-01-01)
@@ -178,13 +180,29 @@
       const diffYears = diffTime / (365.25 * 24 * 60 * 60 * 1000);
 
       if (diffYears <= 0) {
-        resultElement.innerText = "Purchase date must be in the past.";
-        return;
+        return sectionId.toUpperCase() + ": Purchase date must be in the past.";
       }
 
       // Calculate annualized IRR
       const irr = Math.pow(currentValue / invested, 1 / diffYears) - 1;
-      resultElement.innerText = "Real Estate IRR for year " + year + " is: " + (irr * 100).toFixed(2) + "%";
+      return sectionId.toUpperCase() + " IRR for year " + year + " is: " + (irr * 100).toFixed(2) + "%";
+    }
+
+    // Combined function to calculate all results and display in the same output container
+    function calculateAll() {
+      const goldResult = getGoldIRRResult();
+      const re1Result = getRealEstateIRRResult('re1');
+      const re2Result = getRealEstateIRRResult('re2');
+      const re3Result = getRealEstateIRRResult('re3');
+
+      const consolidatedResults = `
+        <p>${goldResult}</p>
+        <p>${re1Result}</p>
+        <p>${re2Result}</p>
+        <p>${re3Result}</p>
+      `;
+
+      document.getElementById('resultsContent').innerHTML = consolidatedResults;
     }
   </script>
 </body>
