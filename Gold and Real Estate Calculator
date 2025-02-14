@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XIRR Calculator for Gold & Real Estate</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      text-align: center; 
+      padding: 20px; 
+      position: relative; 
+    }
+    .logo { 
+      position: absolute; 
+      top: 10px; 
+      right: 20px; 
+      width: 150px; /* Adjust size as needed */
+    }
+    .section {
+      border: 1px solid #ccc;
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 500px;
+      border-radius: 8px;
+    }
+    h1, h2 { margin-top: 0; }
+    input, button { margin: 5px; padding: 5px; }
+    label { display: inline-block; width: 180px; text-align: right; margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <!-- Logo: Ensure the image is in the assets folder -->
+  <img src="assets/logo.png" alt="Anand Rathi Logo" class="logo">
+
+  <!-- Gold IRR Calculator -->
+  <h1>Gold IRR Calculator</h1>
+  <div class="section" id="goldCalculator">
+    <p>
+      <label for="goldYear">Year of Purchase (>=1964):</label>
+      <input type="number" id="goldYear" placeholder="e.g., 1980" />
+    </p>
+    <p>
+      <button onclick="calculateGoldIRR()">Calculate Gold IRR</button>
+    </p>
+    <p id="goldResult"></p>
+  </div>
+
+  <!-- Real Estate 1 IRR Calculator -->
+  <h1>Real Estate 1 IRR Calculator</h1>
+  <div class="section" id="realEstate1">
+    <p>
+      <label for="re1Year">Year of Purchase (>=1964):</label>
+      <input type="number" id="re1Year" placeholder="e.g., 2000" />
+    </p>
+    <p>
+      <label for="re1Invested">Amount Invested:</label>
+      <input type="number" id="re1Invested" placeholder="e.g., 1000000" />
+    </p>
+    <p>
+      <label for="re1Current">Current Value:</label>
+      <input type="number" id="re1Current" placeholder="e.g., 1500000" />
+    </p>
+    <p>
+      <button onclick="calculateRealEstateIRR('re1')">Calculate Real Estate 1 IRR</button>
+    </p>
+    <p id="re1Result"></p>
+  </div>
+
+  <!-- Real Estate 2 IRR Calculator -->
+  <h1>Real Estate 2 IRR Calculator</h1>
+  <div class="section" id="realEstate2">
+    <p>
+      <label for="re2Year">Year of Purchase (>=1964):</label>
+      <input type="number" id="re2Year" placeholder="e.g., 2000" />
+    </p>
+    <p>
+      <label for="re2Invested">Amount Invested:</label>
+      <input type="number" id="re2Invested" placeholder="e.g., 1000000" />
+    </p>
+    <p>
+      <label for="re2Current">Current Value:</label>
+      <input type="number" id="re2Current" placeholder="e.g., 1500000" />
+    </p>
+    <p>
+      <button onclick="calculateRealEstateIRR('re2')">Calculate Real Estate 2 IRR</button>
+    </p>
+    <p id="re2Result"></p>
+  </div>
+
+  <!-- Real Estate 3 IRR Calculator -->
+  <h1>Real Estate 3 IRR Calculator</h1>
+  <div class="section" id="realEstate3">
+    <p>
+      <label for="re3Year">Year of Purchase (>=1964):</label>
+      <input type="number" id="re3Year" placeholder="e.g., 2000" />
+    </p>
+    <p>
+      <label for="re3Invested">Amount Invested:</label>
+      <input type="number" id="re3Invested" placeholder="e.g., 1000000" />
+    </p>
+    <p>
+      <label for="re3Current">Current Value:</label>
+      <input type="number" id="re3Current" placeholder="e.g., 1500000" />
+    </p>
+    <p>
+      <button onclick="calculateRealEstateIRR('re3')">Calculate Real Estate 3 IRR</button>
+    </p>
+    <p id="re3Result"></p>
+  </div>
+
+  <script>
+    // Gold IRR data from 1964 to 2024
+    const goldIRRData = {
+      1964: 12.52, 1965: 12.50, 1966: 12.43, 1967: 12.27, 1968: 11.60,
+      1969: 11.65, 1970: 11.78, 1971: 11.91, 1972: 12.06, 1973: 11.61,
+      1974: 10.55, 1975: 10.63, 1976: 11.36, 1977: 11.34, 1978: 10.78,
+      1979: 10.28, 1980: 9.66, 1981: 9.32, 1982: 9.59, 1983: 9.59,
+      1984: 9.60, 1985: 9.63, 1986: 9.88, 1987: 9.62, 1988: 9.31,
+      1989: 9.57, 1990: 9.80, 1991: 9.85, 1992: 9.42, 1993: 9.88,
+      1994: 9.84, 1995: 10.12, 1996: 10.12, 1997: 10.85, 1998: 11.91,
+      1999: 12.20, 2000: 12.54, 2001: 13.21, 2002: 13.09, 2003: 13.13,
+      2004: 13.56, 2005: 13.26, 2006: 11.43, 2007: 11.20, 2008: 10.92,
+      2009: 9.96, 2010: 8.07, 2011: 7.42, 2012: 8.41, 2013: 9.64,
+      2014: 11.18, 2015: 12.97, 2016: 13.20, 2017: 14.13, 2018: 15.15,
+      2019: 13.72, 2020: 11.00, 2021: 15.14, 2022: 15.58, 2023: 15.90,
+      2024: 10.22
+    };
+
+    // Gold calculator function
+    function calculateGoldIRR() {
+      const yearInput = document.getElementById('goldYear').value;
+      const year = parseInt(yearInput, 10);
+      const resultElement = document.getElementById('goldResult');
+
+      if (!year || year < 1964) {
+        resultElement.innerText = "Please enter a valid year (>=1964).";
+        return;
+      }
+
+      if (goldIRRData[year] === undefined) {
+        resultElement.innerText = "Data for this year is not available.";
+        return;
+      }
+
+      resultElement.innerText = "Gold IRR (till Jan 25) for year " + year + " is: " + goldIRRData[year] + "%";
+    }
+
+    // Function to calculate annualized IRR for Real Estate
+    // Using formula: IRR = (Current Value / Invested)^(1 / years) - 1
+    function calculateRealEstateIRR(sectionId) {
+      const yearInput = document.getElementById(sectionId + 'Year').value;
+      const investedInput = document.getElementById(sectionId + 'Invested').value;
+      const currentInput = document.getElementById(sectionId + 'Current').value;
+      const resultElement = document.getElementById(sectionId + 'Result');
+
+      const year = parseInt(yearInput, 10);
+      const invested = parseFloat(investedInput);
+      const currentValue = parseFloat(currentInput);
+
+      if (!year || year < 1964) {
+        resultElement.innerText = "Please enter a valid year (>=1964).";
+        return;
+      }
+      if (!invested || invested <= 0) {
+        resultElement.innerText = "Please enter a valid invested amount.";
+        return;
+      }
+      if (!currentValue || currentValue <= 0) {
+        resultElement.innerText = "Please enter a valid current value.";
+        return;
+      }
+
+      // Use the first day of the purchase year for calculation (YYYY-01-01)
+      const purchaseDate = new Date(year, 0, 1);
+      const today = new Date();
+      const diffTime = today - purchaseDate;
+      const diffYears = diffTime / (365.25 * 24 * 60 * 60 * 1000);
+
+      if (diffYears <= 0) {
+        resultElement.innerText = "Purchase date must be in the past.";
+        return;
+      }
+
+      // Calculate annualized IRR
+      const irr = Math.pow(currentValue / invested, 1 / diffYears) - 1;
+      resultElement.innerText = "Real Estate IRR for year " + year + " is: " + (irr * 100).toFixed(2) + "%";
+    }
+  </script>
+</body>
+</html>
